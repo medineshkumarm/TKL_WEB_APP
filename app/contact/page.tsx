@@ -1,75 +1,141 @@
-import Image from 'next/image';
+"use client";
 
+import { useState } from "react";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import img from "@/components/images/contact/contact_img.jpg";
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [status, setStatus] = useState("");
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ): void => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
+    e.preventDefault();
+    setStatus("Sending...");
+    console.log("Form submitted:", formData);
+    // setFormData({ name: "", email: "", message: "" });
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setStatus("Message sent successfully!");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setStatus("Failed to send message. Please try again later.");
+      }
+    } catch (error) {
+      setStatus("Error occurred while sending message.");
+      console.error(error);
+    }
+  };
+
   return (
-    <div className="py-16 bg-gradient-to-r from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
-      <div className="container mx-auto px-6">
-        <h1 className="text-4xl font-extrabold text-center text-blue-600 dark:text-blue-400 mb-12">
-          Contact Us
-        </h1>
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <form
-            className="bg-white dark:bg-gray-700 shadow-lg rounded-lg p-8 space-y-6 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
+    <section className="py-16 bg-muted/50">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-bold text-center mb-12">Get in Touch</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <FormInput label="Name" type="text" id="name" />
-            <FormInput label="Email" type="email" id="email" />
-            <FormTextarea label="Message" id="message" rows={4} />
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-500 transition duration-300 transform hover:scale-105"
-            >
-              Send Message
-            </button>
-          </form>
-          <Image
-            src="/placeholder.svg?height=400&width=600"
-            alt="T.K. LOGISTICS office"
-            width={600}
-            height={400}
-            className="rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
-          />
+            <Image
+              src={img}
+              alt="T.K. LOGISTICS office"
+              width={600}
+              height={400}
+            />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block mb-2 text-sm font-medium"
+                >
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block mb-2 text-sm font-medium"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="message"
+                  className="block mb-2 text-sm font-medium"
+                >
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ></textarea>
+              </div>
+              <motion.button
+                type="submit"
+                className="bg-orange-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors duration-300"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Send Message
+              </motion.button>
+            </form>
+            {status && <p className="mt-4 text-center text-lg">{status}</p>}
+          </motion.div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function FormInput({ label, type, id }: { label: string; type: string; id: string }) {
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="block text-gray-700 dark:text-gray-300 font-bold mb-2"
-      >
-        {label}
-      </label>
-      <input
-        type={type}
-        id={id}
-        name={id}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        required
-      />
-    </div>
-  );
-}
-
-function FormTextarea({ label, id, rows }: { label: string; id: string; rows: number }) {
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="block text-gray-700 dark:text-gray-300 font-bold mb-2"
-      >
-        {label}
-      </label>
-      <textarea
-        id={id}
-        name={id}
-        rows={rows}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        required
-      ></textarea>
-    </div>
+    </section>
   );
 }

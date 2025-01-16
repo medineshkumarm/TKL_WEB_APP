@@ -1,10 +1,10 @@
+// Automatic Testimonial Carousel
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { motion } from 'framer-motion'
+import { User2 } from 'lucide-react'
 
 const testimonials = [
   {
@@ -27,46 +27,74 @@ const testimonials = [
   }
 ]
 
-export default function TestimonialCarouselWithImages() {
+export function AutomaticTestimonialCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
 
-  const nextTestimonial = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length)
-  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length)
+    }, 5000)
 
-  const prevTestimonial = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length)
-  }
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <div className="max-w-4xl mx-auto relative">
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <Image
-              src={testimonials[currentIndex].image || "/placeholder.svg"}
-              alt={testimonials[currentIndex].name}
-              width={100}
-              height={100}
-              className="rounded-full"
-            />
-            <div>
-              <p className="text-lg mb-4 italic">{testimonials[currentIndex].text}</p>
-              <p className="font-semibold">{testimonials[currentIndex].name}</p>
-              <p className="text-sm text-muted-foreground">{testimonials[currentIndex].company}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <div className="flex justify-center mt-4 space-x-4">
-        <Button variant="outline" size="icon" onClick={prevTestimonial}>
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <Button variant="outline" size="icon" onClick={nextTestimonial}>
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
+      <motion.div
+        key={currentIndex}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        className="p-6 border rounded-lg shadow-lg"
+      >
+        {/* <Image
+          src={testimonials[currentIndex].image}
+          alt={testimonials[currentIndex].name}
+          width={100}
+          height={100}
+          className="rounded-full mb-4"
+        /> */}
+        <User2 width={100} height={100} className="rounded-full mb-4 bg-orange-400"/>
+        <p className="text-lg italic">{testimonials[currentIndex].text}</p>
+        <p className="font-semibold mt-2">{testimonials[currentIndex].name}</p>
+        <p className="text-sm text-muted-foreground">{testimonials[currentIndex].company}</p>
+      </motion.div>
     </div>
   )
 }
 
+// Continuous Backqueue Testimonial Carousel
+export function ContinuousBackqueueTestimonialCarousel() {
+  return (
+    <div className="overflow-hidden whitespace-nowrap">
+      <motion.div
+        className="inline-flex"
+        animate={{ x: ['0%', '-100%'] }}
+        transition={{
+          x: {
+            repeat: Infinity,
+            repeatType: 'loop',
+            duration: testimonials.length * 5,
+            ease: 'backIn'
+          }
+        }}
+      >
+        {testimonials.map((testimonial, index) => (
+          <div key={index} className="flex-none w-full p-6 border rounded-lg shadow-lg">
+            <Image
+              src={testimonial.image}
+              alt={testimonial.name}
+              width={100}
+              height={100}
+              className="rounded-full mb-4"
+            />
+            <p className="text-lg italic">{testimonial.text}</p>
+            <p className="font-semibold mt-2">{testimonial.name}</p>
+            <p className="text-sm text-muted-foreground">{testimonial.company}</p>
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  )
+}

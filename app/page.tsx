@@ -1,9 +1,11 @@
 import Hero from "@/components/Hero";
 import WhyChooseUs from "@/components/WhyChooseUs";
 // import TestimonialCarousel from "@/components/TestimonialCarousel";
-import TestimonialCarouselWithImages from "@/components/TestimonialCarouselWithImages";
+// import TestimonialCarouselWithImages from "@/components/TestimonialCarouselWithImages";
+import {AutomaticTestimonialCarousel} from "@/components/TestimonialCarouselWithImages";
 import LogisticsGame from "@/components/LogisticsGame";
 import CounterMetrics from "@/components/CounterMetric";
+import Contact from "./contact/page";
 
 export default function Home() {
   return (
@@ -35,9 +37,12 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-12">
           What Our Clients Say
           </h2>
-          <TestimonialCarouselWithImages />
+          <AutomaticTestimonialCarousel />
         </div>
       </section>
+
+      {/* contact section */}
+      <Contact/>
     </div>
   );
 }

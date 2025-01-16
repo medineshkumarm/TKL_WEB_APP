@@ -40,12 +40,15 @@ export default function Navigation() {
             <Button variant="ghost" asChild>
               <Link href="/faq">FAQ</Link>
             </Button>
-            <Button variant="ghost" asChild>
+            <Button variant="default" asChild>
               <Link href="/contact">Contact</Link>
             </Button>
           </div>
           <div className="flex items-center space-x-4">
+            {/* theme toggle */}
             <ModeToggle />
+
+            {/* mobile nav bar */}
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" className="sm:hidden">
