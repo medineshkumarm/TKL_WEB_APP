@@ -19,7 +19,7 @@ export default function Footer() {
             <address className="text-sm text-muted-foreground not-italic">
               NO.12, KUMARAN STREET,<br />
               MEENAMBAKKAM, CHENNAI – 600027<br />
-              Phone: 09500078157<br />
+              Office: 044 4510 4050 / 044 2256 0457<br />
               Email: info@tklogistics.co.in
             </address>
           </div>
